@@ -30,7 +30,7 @@ def registration(request):
             return Response("Registration Successful")
         
 @api_view(['POST'])
-def login(request):
+def user_login(request):
     userlogins = loginSerializer(data=request.data)
     if userlogins.is_valid(raise_exception = True):
         cd = userlogins.validated_data
