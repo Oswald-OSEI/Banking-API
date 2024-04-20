@@ -7,7 +7,6 @@ from django.contrib.auth.admin import UserAdmin
 # Register your models here.
 class UserAccount(UserAdmin):
     list_display = ('email','first_name',  'last_name',  'last_login', 'is_active',)
-    readonly_fields = ('last_login', 'date_registered',)
     ordering = ['email']
     filter_horizontal = ()
     list_filter = ()
