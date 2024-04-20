@@ -26,8 +26,6 @@ class Account(AbstractUser):
     )
     Id_type = models.CharField(max_length = 30, choices = national_id_type)
     Id_number = models.CharField(max_length = 20)
-    date_registered = models.DateField(auto_now=True)
-    last_login = models.DateField(auto_now_add=True)
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name", "telephone_number"]
     objects = manager()
