@@ -25,7 +25,7 @@ admin.site.register(BankAccount, BankAccountAdmin)
 
 class TransactionAdmin(admin.ModelAdmin):
     model = Transaction
-    list_display = ('bank_account', 'bank_account_number','amount','transaction_date')
+    list_display = ('bank_account', 'bank_account_number','amount','transaction_type','transaction_date')
     ordering = ('transaction_date',)
     filter_horizontal = ()
     list_filter = ()

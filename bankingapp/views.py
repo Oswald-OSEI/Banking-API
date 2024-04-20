@@ -18,10 +18,7 @@ def create_bank_account(request):
     if request.method == "POST":
         account_details = BankAccountSerializer(data=request.data)
         if account_details.is_valid(raise_exception=True):
-            number = BankAccount.objects.get(account_number = account_number_generator)
-            while number is not None:
-                j = account_number_generator
-                number = BankAccount.objects.get(account_number = j)
+            j = account_number_generator()
             cd = account_details.data
             created_account = BankAccount.objects.create(
                 user = request.user, 
@@ -36,14 +33,14 @@ def view_bank_account(request):
     account_data = BankAccountSerializer(your_account).data
     return Response(account_data)
 
-@api_view(['GETE','POST'])
+@api_view(['GET','POST'])
 def deposit(request):
     if request.method == "POST":
         your_transaction = TransactionSerializer(data=request.data)
         if your_transaction.is_valid(raise_exception=True):
             cd = your_transaction.data
             try:
-                your_account = BankAccount.objects.get(bank_account__user=request.user)
+                your_account = BankAccount.objects.get(user=request.user)
                 if cd.get("bank_account_number")==your_account.account_number:
                     new_balance = your_account.balance + cd.get("amount")
                     your_account.balance = new_balance
@@ -51,7 +48,8 @@ def deposit(request):
                     saved_transaction = Transaction.objects.create(
                         bank_account = your_account, 
                         bank_account_number = your_account.account_number,
-                        amount = cd.get("amount")
+                        amount = cd.get("amount"),
+                        transaction_type = "deposit"
                     )
                     saved_transaction.save()
                     return Response("Transaction Successful")
@@ -67,15 +65,19 @@ def withdrawal(request):
         if your_transaction.is_valid(raise_exception=True):
             cd = your_transaction.data
             try:
-                your_account = BankAccount.objects.get(bank_account__user=request.user)
+                your_account = BankAccount.objects.get(user=request.user)
                 if cd.get("bank_account_number")==your_account.account_number:
-                    new_balance = your_account.balance - cd.get("amount")
-                    your_account.balance = new_balance
-                    your_account.save()
+                    if cd.get("amount") > your_account.balance:
+                        return Response("You have less than the amount you want to withdraw")
+                    else:
+                        new_balance = your_account.balance - cd.get("amount")
+                        your_account.balance = new_balance
+                        your_account.save()
                     saved_transaction = Transaction.objects.create(
                         bank_account = your_account, 
                         bank_account_number = your_account.account_number,
-                        amount = cd.get("amount")
+                        amount = cd.get("amount"),
+                        transaction_type = "withdrawal"
                     )
                     saved_transaction.save()
                     return Response("Transaction Successful")
