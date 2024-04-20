@@ -5,7 +5,7 @@ from .managers import manager
 # Create your models here.
 def user_profile_pics_directory(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
-    return 'user_{0}/passport_pics/{1}'.format(instance.account_holder.email, filename)
+    return 'users/passport_pics/{0}'.format(filename)
 class Account(AbstractUser):
     username = None
     email = models.EmailField(null = True, unique = True)
